@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "formatters": {
+    "detailed":{
+      "format":"%(asctime)s - %(name)s::%(lineno)s - %(levelname)s - %(message)s"
+    },
+    "default": {
+      "()": "uvicorn.logging.DefaultFormatter",
+      "fmt": "%(levelprefix)s %(message)s",
+      "use_colors": "None"
+    },
+    "access": {
+      "()": "uvicorn.logging.AccessFormatter",
+      "fmt": "%(levelprefix)s %(client_addr)s - \"%(request_line)s\" %(status_code)s"
+    }
+  },
+  "handlers":{
+    "std":{
+      "class": "logging.StreamHandler",
+      "level": "DEBUG",
+      "formatter": "detailed"
+    },
+    "file": {
+      "class": "logging.FileHandler",
+      "level": "INFO",
+      "formatter": "detailed",
+      "filename": "./logs/test.log"
+    },
+    "default": {
+      "formatter": "default",
+      "class": "logging.StreamHandler",
+      "stream": "ext://sys.stderr"
+    },
+    "access": {
+      "formatter": "access",
+      "class": "logging.StreamHandler",
+      "stream": "ext://sys.stdout"
+    }
+  },
+  "loggers": {
+    "app":{
+      "handlers": ["std", "file"],
+      "level": "INFO"
+    },
+    "uvicorn": {
+      "handlers": ["default"],
+      "level": "INFO",
+      "propagate": "False"
+    },
+    "uvicorn.error": {
+      "level": "INFO"
+    },
+    "uvicorn.access": {
+      "handlers": ["access"],
+      "level": "INFO",
+      "propagate": "False"
+    }
+  }
+}

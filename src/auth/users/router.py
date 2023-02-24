@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from users.schemas import UserLogin, UserCreate
+from starlette import status
+
+from users.schemas import UserLogin, UserCreate, Token
 from config.db import get_db
 from .services import add_new_user_in_db, check_user_in_db
 
@@ -12,6 +14,6 @@ async def create_new_user(new_user: UserCreate, db: AsyncSession = Depends(get_d
     return await add_new_user_in_db(db, new_user)
 
 
-@router.post('/login')
+@router.post('/login', response_model=Token, status_code=status.HTTP_200_OK)
 async def login_user(user: UserLogin, db: AsyncSession = Depends(get_db)):
-    return check_user_in_db(db, user)
+    return await check_user_in_db(db, user)

@@ -10,6 +10,10 @@ class UserCreate(UserBase):
     password: str
 
 
+class UserLogin(UserCreate):
+    ...
+
+
 class UserInDB(UserBase):
     id: int
     username: str

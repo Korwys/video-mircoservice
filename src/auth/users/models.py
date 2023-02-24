@@ -1,9 +1,11 @@
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, Integer
 
-from src.auth.db import Base
+from config.db import Base
 
 
 class User(Base):
-    id = Column(Integer, primary_key=True, index=True),
-    username = Column(String(100),nullable=False)
-    password = Column(String(50))
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, nullable=False)
+    password = Column(String)

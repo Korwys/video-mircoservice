@@ -1,19 +1,17 @@
 import logging
 from datetime import timedelta, datetime
 
+from config.base import settings
+from config.db import get_db
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
-from jose import JWTError, jwt
-
-from config.base import settings
-from config.db import get_db
 from users.models import User
-from users.schemas import TokenData
 
 logger = logging.getLogger('app.users.utils')
 
@@ -51,24 +49,17 @@ def create_token(sub: str):
         logger.exception(err)
 
 
-async def get_current_user(db: AsyncSession = Depends(get_db), token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-
+async def get_current_user(token: str, db: AsyncSession):
     try:
         payload = jwt.decode(token, settings.secret, algorithms=[settings.algorithm])
         username = payload.get('sub')
         if username is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate credentials')
-
-        token_data = TokenData(username=username)
     except JWTError:
-        raise credentials_exception
+        raise HTTPException(status_code=401, detail="Can't validate credentials")
 
-    response = await db.execute(select(User).filter(User.username == token_data.username))
-    if response.first() is None:
-        raise credentials_exception
-    return response.first()
+    response = await db.execute(select(User).filter(User.username == username))
+    obj = response.scalars().first()
+    if not obj.username:
+        raise HTTPException(status_code=401, detail="Can't validate credentials")
+    return obj.username

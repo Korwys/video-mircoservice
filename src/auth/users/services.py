@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from starlette.responses import JSONResponse
+from fastapi import HTTPException
 
 from users.helpers import error_info
 from .schemas import UserCreate, UserLogin
@@ -34,7 +35,7 @@ async def add_new_user_in_db(db: AsyncSession, obj_in: UserCreate) -> JSONRespon
 async def check_user_in_db(db: AsyncSession, user: UserLogin):
     user_response = await fetch_user_from_db(db, user)
     if not user_response or not verify_user_password(user.password, user_response.password):
-        return JSONResponse(status_code=401, content={'Message': 'Bad credentials'})
+        raise HTTPException(status_code=401, detail='Bad credentials')
 
     return {
         "access_token": create_token(sub=user_response.username),

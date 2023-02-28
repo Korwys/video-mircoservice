@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-configmap
+data:
+  POSTGRES_HOST: host.minikube.internal
+  POSTGRES_USER: lafamilia
+  POSTGRES_DB: lafamilia
+  POSTGRES_PORT: "5432"

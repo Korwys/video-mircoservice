@@ -1,12 +1,10 @@
-import logging
-
 import requests
-from fastapi import Depends, Request, APIRouter
+from fastapi import Depends, Request, APIRouter, UploadFile
 from starlette.responses import JSONResponse
 
 from auth.users.schemas import UserInDB
 from gateway.schemas import UserBase
-from gateway.utils import check_current_user
+from gateway.utils import check_current_user, save_file_in_mongo
 
 router = APIRouter()
 
@@ -31,12 +29,11 @@ def login(user: UserBase):
         return JSONResponse(status_code=401, content={"Message": "Bad credentials"})
 
 
-@router.post('/upload', )
-def video_upload(request: Request, user: UserInDB = Depends(check_current_user)):
-    a = user
-    print('ok')
+@router.post('/upload')
+def video_upload(request: Request,file: UploadFile):
+    return save_file_in_mongo(file)
+
 
 
 @router.get('/download')
-def video_download():
-    pass
+def video_download(): pass

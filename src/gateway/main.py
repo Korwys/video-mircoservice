@@ -3,6 +3,7 @@ import logging.config
 
 import uvicorn
 from fastapi import FastAPI
+from pymongo import MongoClient
 
 from gateway.router import router
 

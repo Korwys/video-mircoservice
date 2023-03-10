@@ -9,7 +9,7 @@ class Connections:
     grid_video = gridfs.GridFS(client.db, collection='video')
     grid_mp3 = gridfs.GridFS(client.db, collection='mp3')
 
-    connection = pika.BlockingConnection(pika.ConnectionParameters("rabbitmq"))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost', port=5672))
     channel = connection.channel()
 
 

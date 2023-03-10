@@ -30,8 +30,8 @@ def login(user: UserBase):
 
 
 @router.post('/upload')
-def video_upload(request: Request,file: UploadFile):
-    return save_file_in_mongo(file)
+def video_upload(file: UploadFile, user: str = Depends(check_current_user)):
+    return save_file_in_mongo(file, user)
 
 
 

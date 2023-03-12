@@ -1,13 +1,13 @@
 import json
 import os
 import smtplib
-from email.mime.multipart import MIMEMultipart
 from email.mime.audio import MIMEAudio
+from email.mime.multipart import MIMEMultipart
+
 from bson.objectid import ObjectId
 
 
-
-def send_notification_email(channel, data, fsaudio):
+def send_notification_email(data, fsaudio):
     message = json.dumps(data)
     receiver_email = message['username']
     audio_file = fsaudio.get(ObjectId(message['audio_fid']))
@@ -24,10 +24,10 @@ def send_notification_email(channel, data, fsaudio):
     msg['To'] = receiver_email
     msg['Subject'] = 'You mp3 file is ready!'
 
-    file = MIMEAudio(audio_file.read())
+    with open(audio_file, 'rb') as f:
+        src = MIMEAudio(f.read(), _subtype='mp3')
 
-    file.add_header('content-disposition','attachment')
-    msg.attach(file)
+    src.add_header('content-disposition', 'attachment', filename=f'{message["audio_fid"]}.mp3')
+    msg.attach(src)
 
-    server.sendmail(sender,receiver_email,msg.as_string())
-
+    server.sendmail(sender, receiver_email, msg.as_string())

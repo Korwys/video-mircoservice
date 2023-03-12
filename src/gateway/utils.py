@@ -6,6 +6,7 @@ from fastapi import HTTPException, Request, UploadFile
 from starlette.responses import JSONResponse
 
 from gateway.config.connections import manager
+from email.message import EmailMessage
 
 
 def check_current_user(request: Request) -> str:

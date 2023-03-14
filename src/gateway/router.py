@@ -1,8 +1,7 @@
 import requests
-from fastapi import Depends, Request, APIRouter, UploadFile
+from fastapi import Depends, APIRouter, UploadFile
 from starlette.responses import JSONResponse
 
-from auth.users.schemas import UserInDB
 from gateway.schemas import UserBase
 from gateway.utils import check_current_user, save_file_in_mongo
 
@@ -32,8 +31,3 @@ def login(user: UserBase):
 @router.post('/upload')
 def video_upload(file: UploadFile, user: str = Depends(check_current_user)):
     return save_file_in_mongo(file, user)
-
-
-
-@router.get('/download')
-def video_download(): pass

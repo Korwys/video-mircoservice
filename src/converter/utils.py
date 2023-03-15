@@ -54,3 +54,5 @@ def get_audio_from_video(message: dict, ch, gridfs_video, gridfs_audio):
 
     if response != 'ok':
         return 'Sorry, some error. Please, try again later'
+
+    return 'ok'
